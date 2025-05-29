@@ -1,13 +1,24 @@
-import { Outlet } from 'react-router';
+import { Outlet, Form, redirect } from 'react-router';
 import { LogOut, X } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import ContactList from '~/chat/components/ContactList';
 import ContactInformationCard from '~/chat/components/contact-information-card/ContactInformationCard';
 import { getClients } from '~/fake/fake-data';
+import { getSession } from '~/sessions.server';
 import type { Route } from './+types/chat-layout';
 
 
-export async function loader() {
+export async function loader({ request }: Route.LoaderArgs) {
+  // Validate session
+  const session = await getSession(
+    request.headers.get("Cookie")
+  );
+
+  // If no user session exists, redirect to login
+  if (!session.has("userId")) {
+    return redirect("/auth/login");
+  }
+
   const clients = await getClients();
   return { clients };
 }
@@ -31,16 +42,15 @@ export default function ChatLayout({ loaderData }: Route.ComponentProps) {
 
         {/* Logout Section */}
         <div className='fixed bottom-0 left-0 w-64 p-4 border-t bg-muted/10'>
-          <Button
-            variant='outline'
-            className='w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-100 border-red-200 rounded-lg bg-red-50'
-            onClick={() => console.log('Logout clicked')}
-          >
-            <div className='h-5 w-5 mr-2'>
-              <LogOut className='h-5 w-5' />
-            </div>
-            Sign out
-          </Button>
+          <Form method="post" action="/auth/logout">
+            <Button
+              type="submit"
+              variant='outline'
+              className='w-full justify-center text-red-500 hover:text-red-600 hover:bg-red-100 border-red-200 rounded-lg bg-red-50'
+            >
+              Sign out
+            </Button>
+          </Form>
         </div>
       </div>
 
