@@ -78,6 +78,11 @@ export default function TestingArgsPage({
   return (
     <div>
       <h1 className='text-2xl font-bold'>Testing Args Page!</h1>
+      <h2 className='text-xl font-semibold'>User Information</h2>
+      <p>User ID: {id}</p>
+      <p>User Name: {name}</p>
+      <p>User Age: {age}</p>
+      <h2 className='text-xl font-semibold mt-4'>Data from Loaders</h2>
       <p>Loader Data: {JSON.stringify(loaderData)}</p>
       <p>Action Data: {JSON.stringify(actionData)}</p>
       <p>Route Parameters: {JSON.stringify(params)}</p>

@@ -8,6 +8,7 @@ import { Input } from '~/components/ui/input';
 
 import placeholder from '~/assets/images/placeholder.svg';
 import { getSession, commitSession } from '~/sessions.server';
+import { loginUser } from '~/fake/fake-data';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get('Cookie'));
@@ -66,10 +67,12 @@ export async function action({ request }: Route.ActionArgs) {
     );
   }
 
+  const user = await loginUser();
+
   // Set session data for successful login
-  session.set('userId', 'U1-12345');
-  session.set('token', 'token-1234567890');
-  session.set('name', 'Hector Diaz');
+  session.set('userId', user.id);
+  session.set('token', user.token);
+  session.set('name', user.name);
 
   // Login succeeded, redirect to chat
   return redirect('/chat', {
